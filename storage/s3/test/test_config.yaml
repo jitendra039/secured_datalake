@@ -1,0 +1,7 @@
+bucket:
+  testRaw:
+    bucketName: "raw" #Add a unique string here
+  testTransform:
+    bucketName: "trans"
+  testAnalytics:
+    bucketName: "analay"
