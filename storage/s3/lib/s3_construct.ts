@@ -3,6 +3,7 @@ import { Construct } from 'constructs';
 import * as s3 from 'aws-cdk-lib/aws-s3';
 const yaml = require('js-yaml');
 const fs   = require('fs');
+import { NagSuppressions  } from 'cdk-nag'
 
 export class S3Construct extends cdk.Stack {
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
@@ -21,9 +22,10 @@ export class S3Construct extends cdk.Stack {
   private createS3Bucket(bucketName:string,bucketProps:s3.BucketProps): s3.Bucket {
     const contentRecomRawS3Bucket = new s3.Bucket(this, bucketName, {
       bucketKeyEnabled: bucketProps.bucketKeyEnabled,
+      blockPublicAccess: s3.BlockPublicAccess.BLOCK_ALL,
       bucketName: bucketProps.bucketName,
-      encryption: bucketProps.encryption,
-      encryptionKey: bucketProps.encryptionKey,
+      encryption: s3.BucketEncryption.KMS,
+      encryptionKey: bucketProps.encryptionKey, // Get KMS key arn
       enforceSSL: bucketProps.enforceSSL,
       intelligentTieringConfigurations: bucketProps.intelligentTieringConfigurations,
       removalPolicy: bucketProps.removalPolicy,
@@ -31,6 +33,9 @@ export class S3Construct extends cdk.Stack {
       serverAccessLogsPrefix: bucketProps.serverAccessLogsPrefix,
       versioned: bucketProps.versioned
     });
+    NagSuppressions.addResourceSuppressions(contentRecomRawS3Bucket,[
+      {id:"AwsSolutions-S1",reason:"Testing S3 Bucket"}
+      ])
     return contentRecomRawS3Bucket
   } 
 }
